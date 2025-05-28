@@ -1,0 +1,25 @@
+services:
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    restart: always
+    ports:
+      - "80:80"
+    networks:
+      - traefik-network
+    environment:
+      TZ: Asia/Tokyo
+    labels:
+      traefik.enable: true
+      traefik.http.routers.dashboard.rule: Host(`localhost.docker.internal`)
+      traefik.http.routers.dashboard.entrypoints: web
+      traefik.http.routers.dashboard.service: api@internal
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik.yml:/etc/traefik/traefik.yml:ro
+
+networks:
+  # conpose外で作成したネットワークを利用するためexternal: trueにする
+  # -> 別のcomposeでネットワークを共有するため
+  traefik-network:
+    external: true
