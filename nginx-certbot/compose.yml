@@ -1,0 +1,70 @@
+services:
+  nginx:
+    image: nginx:1.28
+    volumes:
+      # certs
+      - type: volume
+        source: certs
+        target: /etc/letsencrypt
+      - type: volume
+        source: webroot
+        target: /opt/webroot
+
+      # etc
+      - type: bind
+        source: ./nginx/nginx.conf
+        target: /etc/nginx/nginx.conf
+      - type: bind
+        source: ./nginx/conf.d
+        target: /etc/nginx/conf.d
+
+      # html
+      - type: bind
+        source: ./share
+        target: /opt/nginx
+
+      # log
+      - type: bind
+        source: ./log/nginx
+        target: /var/log/nginx
+    networks:
+      - ip6only
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+      TZ: Asia/Tokyo
+    command: "/bin/sh -c 'while :; do sleep 36h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    restart: unless-stopped
+
+  certbot:
+    image: certbot/certbot:latest
+    volumes:
+      - type: volume
+        source: certs
+        target: /etc/letsencrypt
+      - type: volume
+        source: webroot
+        target: /opt/webroot
+
+      # log
+      - type: bind
+        source: ./log/letsencrypt
+        target: /var/log/letsencrypt
+    networks:
+      - ip6only
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew ; echo sleeping 7day ; sleep 7d & wait $${!}; done;'"
+    restart: unless-stopped
+
+
+volumes:
+  certs:
+  webroot:
+
+networks:
+  ip6only:
+    enable_ipv4: false
+    enable_ipv6: true
+    ipam:
+      config:
+        - subnet: fd01:e87c:55ad::/64

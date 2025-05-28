@@ -1,0 +1,4 @@
+/log/letsencrypt/*
+!/log/letsencrypt/.gitkeep
+/log/nginx/*
+!/log/nginx/.gitkeep
