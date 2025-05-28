@@ -59,3 +59,7 @@ MEMO:
     - 専用ネットワークを作る
     - daemon.json で ipv6: trueをする
   - traefik使った方がよさそう
+  - TLS: CNがどう扱われるのかよくわからない問題
+    - https://qiita.com/jqtype/items/bd6f0d819944ef954d88
+    - cloudflareのTLS/SSL proxyを使った時もどうなるかわからない問題
+
