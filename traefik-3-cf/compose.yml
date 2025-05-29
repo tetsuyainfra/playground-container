@@ -1,0 +1,74 @@
+services:
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    restart: always
+    ports:
+      - "80:80"
+      # 検証なので外部に公開する.
+      # 本番環境では Cloudflare tunnel(containerd)等を使って別途安全にアクセスするのが良いと思う
+      - "8080:8080"
+    environment:
+      TZ: Asia/Tokyo
+    labels:
+      traefik.enable: true
+      traefik.http.routers.dashboard.rule: Host(`localhost.docker.internal`)
+      traefik.http.routers.dashboard.entrypoints: dash
+      traefik.http.routers.dashboard.service: api@internal
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik.yml:/etc/traefik/traefik.yml:ro
+
+  whoami:
+    image: traefik/whoami
+    container_name: whoami # 親ディレクトリ + service名になるから、これが必要なのかな？
+    labels:
+      traefik.enable: true
+      traefik.http.routers.whoami.rule: Host(`whoami.docker.internal`)
+      traefik.http.routers.whoami.entrypoints: web
+      # 省略可能
+      # serviceの名前と一致していたら省略可能(traefikから名前が引けるならってことかな？)
+      # traefik.http.routers.whoami.service: whoami
+      # DockerfileでExposeされていたらいらない
+      # traefik.http.services.whoami.loadbalancer.server.port: 80
+    command:
+       - --name=iamfoo1
+    restart: always
+
+  whoami2:
+    image: traefik/whoami
+    labels:
+      traefik.enable: true
+      traefik.http.routers.whoami2.rule: Host(`whoami2.docker.internal`)
+      traefik.http.routers.whoami2.entrypoints: web
+      # 追加
+      traefik.http.routers.whoami2.middlewares: auth
+      # $htpasswd -nb traefik traefik
+      traefik.http.middlewares.auth.basicauth.users: traefik:$$apr1$$a47tjolc$$ORXnihWt3/xC3wLWFfCWb.
+    command:
+       - --name=iamfoo2
+    restart: always
+
+  whoami3:
+    image: traefik/whoami
+    labels:
+      traefik.enable: true
+      traefik.http.routers.whoami3.rule: Host(`proxy.dev-docker-ie-test1.007144.xyz`)
+      traefik.http.routers.whoami3.entrypoints: web
+    command:
+       - --name=iamfoo3
+    restart: always
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate run
+    environment:
+      - TUNNEL_TOKEN=${CF_CLOUDFLARED_TOKEN}
+
+  ubuntu:
+    image: tetsuyainfra/utils:latest
+    command: /bin/sh -c 'sleep infinity'
+
+  # testenv:
+  #   image: ubuntu:latest
+  #   command: /bin/sh -c 'echo ${CF_CLOUDFLARED_TOKEN}'
