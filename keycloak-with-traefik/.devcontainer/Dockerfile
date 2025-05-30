@@ -14,11 +14,12 @@ RUN if [ "${INSTALL_MAVEN}" = "true" ]; then su vscode -c "umask 0002 && . /usr/
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y install --no-install-recommends \
         postgresql-client \
-        curl sudo ca-certificates
+        curl sudo ca-certificates \
+        iputils-ping net-tools dnsutils
 
 # [Optional] Uncomment this line to install global node packages.
 # RUN su vscode -c "source /usr/local/share/nvm/nvm.sh && npm install -g <your-package-here>" 2>&1
 
 
 # INSTALL MISE
-RUN curl https://mise.run | MISE_INSTALL_PATH=/usr/local/bin/mise sh
+# RUN curl https://mise.run | MISE_INSTALL_PATH=/usr/local/bin/mise sh
