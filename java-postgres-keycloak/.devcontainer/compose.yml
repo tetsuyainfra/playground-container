@@ -2,6 +2,7 @@ name: java-postgres-keycloak
 
 volumes:
   postgres-data:
+  keycloak-data:
 
 services:
   app:
@@ -11,13 +12,14 @@ services:
       dockerfile: Dockerfile
     environment:
       # NOTE: POSTGRES_DB/USER/PASSWORD should match values in db container
-        POSTGRES_PASSWORD: postgres
-        POSTGRES_USER: postgres
-        POSTGRES_DB: postgres
-        POSTGRES_HOSTNAME: postgresdb
+      POSTGRES_HOSTNAME: $POSTGRES_HOSTNAME
+      POSTGRES_DB: $POSTGRES_DB
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
 
     volumes:
-      - ../..:/workspaces:cached
+      # - ../..:/workspaces:cached
+      - ../..:/workspaces
 
     # Overrides default command so things don't shut down after the process ends.
     command: sleep infinity
@@ -26,21 +28,26 @@ services:
     # network_mode: service:db
     networks:
       - mynetwork
-
     # Use "forwardPorts" in **devcontainer.json** to forward an app port locally.
     # (Adding the "ports" property to this file will not forward from a Codespace.)
 
   db:
     # container_name: postgresdb
     image: postgres:latest
-    restart: unless-stopped
+    # restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB} || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 5s
     volumes:
       - postgres-data:/var/lib/postgresql/data
     environment:
       # NOTE: POSTGRES_DB/USER/PASSWORD should match values in app container
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_DB: postgres
+      POSTGRES_DB: $POSTGRES_DB
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
 
     # Add "forwardPorts": ["5432"] to **devcontainer.json** to forward PostgreSQL locally.
     # (Adding the "ports" property to this file will not forward from a Codespace.)
@@ -49,10 +56,41 @@ services:
 
   auth:
     # container_name: keycloak
-    image: quay.io/keycloak/keycloak:26.2.5
+    # image: quay.io/keycloak/keycloak:26.2.5
+    build:
+      context: .
+      dockerfile: Dockerfile.keycloak
     networks:
       - mynetwork
-    command: start-dev
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - type: bind
+        source: ../keycloak/realmtmp
+        target: /tmp/realmtmp
+      - type: volume
+        source: keycloak-data
+        target: /opt/keycloak/data
+      - type: bind
+        source: ../keycloak/import
+        target: /opt/keycloak/data/import
+      - type: bind
+        source: ../themes
+        target: /opt/keycloak/themes
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+    ports:
+      - 8080:8080
+    # command: start-dev --import-realm
+    # command: start-dev --import-realm --db postgres --db-url jdbc:postgresql://mypostgres/mydatabase
+    command: >-
+      start-dev
+      --import-realm
+      --db postgres --db-url-host $POSTGRES_HOSTNAME --db-username $POSTGRES_USER --db-password $POSTGRES_PASSWORD
+      --spi-theme-static-max-age=-1 --spi-theme-cache-themes=false --spi-theme-cache-templates=false
+
 
 networks:
   mynetwork:

@@ -14,3 +14,27 @@ how to create devcontainer config
 # と思ったら、Dockerfileのベースイメージを変更(bullseye -> bookwromへ)したら動いた
 # FROM mcr.microsoft.com/devcontainers/java:1-21-bookworm
 ```
+
+
+
+# Realmの保存方法
+```
+$ ./compose.sh stop auth
+$ ./compose.sh --rm -it --entrypoint /bin/bash auth 
+#in auth container
+$ cd /opt/keycloak
+$ ./bin/kc.sh export --dir /tmp/realmtmp --users different_files
+# see help
+$ ./bin/kc.sh export --help
+
+```
+
+
+# comopse.ymlでの環境変数
+  - compose.yml と同じディレクトリにある.evn
+    - compose.ymlで使える環境変数
+  - envitonment:
+    - container内の環境変数
+  - env_file:
+    - container内の環境変数
+  - docker compose config で確認できる
