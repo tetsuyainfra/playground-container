@@ -1,0 +1,12 @@
+body {
+    background: rgb(90, 38, 38) none;
+}
+
+.footer-img {
+    width: 200px;
+    height: 200px;
+    display: block;
+
+    background-image: url('../img/image.png');
+    background-size: cover;
+}

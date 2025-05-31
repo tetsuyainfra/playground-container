@@ -1,0 +1,1 @@
+console.log('thems/mytheme/js/script.js')
