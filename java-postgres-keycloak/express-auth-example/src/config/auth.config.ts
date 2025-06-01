@@ -1,4 +1,4 @@
-// import Apple from "@auth/express/providers/apple"
+import Apple from "@auth/express/providers/apple"
 // import Auth0 from "@auth/express/providers/auth0"
 // import AzureB2C from "@auth/express/providers/azure-ad-b2c"
 // import BoxyHQSAML from "@auth/express/providers/boxyhq-saml"
@@ -11,7 +11,7 @@
 // import GitLab from "@auth/express/providers/gitlab"
 // import Google from "@auth/express/providers/google"
 // import Hubspot from "@auth/express/providers/hubspot"
-// import Keycloak from "@auth/express/providers/keycloak"
+import Keycloak from "@auth/express/providers/keycloak"
 // import LinkedIn from "@auth/express/providers/linkedin"
 // import Netlify from "@auth/express/providers/netlify"
 // import Okta from "@auth/express/providers/okta"
@@ -28,7 +28,7 @@
 export const authConfig = {
   trustHost: true,
   providers: [
-    // Apple,
+    Apple,
     // Auth0,
     // AzureB2C({
     //   clientId: process.env.AUTH_AZURE_AD_B2C_ID,
@@ -50,6 +50,14 @@ export const authConfig = {
     // Google,
     // Hubspot,
     // Keycloak,
+    // Keycloak,
+    Keycloak(
+      {
+        clientId: process.env.AUTH_KEYCLOAK_ID,
+        clientSecret: process.env.AUHT_KEYCLOAK_CLIENT_SECRET,
+        issuer: process.env.AUTH_KEYCLOAK_ISSUER,
+      }
+    ),
     // LinkedIn,
     // Netlify,
     // Okta,
