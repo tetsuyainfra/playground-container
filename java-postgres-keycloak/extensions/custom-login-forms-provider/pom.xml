@@ -1,0 +1,36 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.github.tetsuyainfra.keycloak</groupId>
+  <artifactId>custom-login-forms-provider</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>custom-login-forms-provider</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <version.keycloak>26.2.5</version.keycloak>
+    <version.keycloak.client>26.0.5</version.keycloak.client>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.keycloak</groupId>
+      <artifactId>keycloak-dependencies-server-all</artifactId>
+      <type>pom</type>
+      <version>${version.keycloak}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.keycloak</groupId>
+      <artifactId>keycloak-core</artifactId>
+      <version>${version.keycloak}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.keycloak</groupId>
+      <artifactId>keycloak-services</artifactId>
+      <version>${version.keycloak}</version>
+    </dependency>
+  </dependencies>
+</project>
