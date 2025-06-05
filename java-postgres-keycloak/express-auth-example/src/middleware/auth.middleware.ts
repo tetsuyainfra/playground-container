@@ -25,7 +25,9 @@ export async function currentSession(
   res: Response,
   next: NextFunction,
 ) {
+  // console.log("currentSession middleware called")
   const session = (await getSession(req, authConfig)) ?? undefined
+
   res.locals.session = session
   return next()
 }

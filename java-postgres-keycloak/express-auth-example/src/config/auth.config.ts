@@ -12,6 +12,7 @@ import Apple from "@auth/express/providers/apple"
 // import Google from "@auth/express/providers/google"
 // import Hubspot from "@auth/express/providers/hubspot"
 import Keycloak from "@auth/express/providers/keycloak"
+import { profile } from "node:console"
 // import LinkedIn from "@auth/express/providers/linkedin"
 // import Netlify from "@auth/express/providers/netlify"
 // import Okta from "@auth/express/providers/okta"
@@ -50,14 +51,19 @@ export const authConfig = {
     // Google,
     // Hubspot,
     // Keycloak,
-    // Keycloak,
-    Keycloak(
-      {
-        clientId: process.env.AUTH_KEYCLOAK_ID,
-        clientSecret: process.env.AUHT_KEYCLOAK_CLIENT_SECRET,
-        issuer: process.env.AUTH_KEYCLOAK_ISSUER,
-      }
-    ),
+    Keycloak({
+      async profile(profile) {
+        console.log("profile: ", profile);
+        return { ...profile }
+      },
+    })
+    // Keycloak(
+    //   {
+    //     clientId: process.env.AUTH_KEYCLOAK_ID,
+    //     clientSecret: process.env.AUHT_KEYCLOAK_CLIENT_SECRET,
+    //     issuer: process.env.AUTH_KEYCLOAK_ISSUER,
+    //   }
+    // ),
     // LinkedIn,
     // Netlify,
     // Okta,
@@ -73,4 +79,17 @@ export const authConfig = {
     // }),
     // Zoom,
   ],
+  callbacks: {
+    async session({ session, token, user }: { session: any; token: any; user: any }) {
+      console.log("callback:session():session", session);
+      console.log("callback:session():token", token);
+      console.log("callback:session():user", user);
+      // Send properties to the client, like an access_token and user id from a provider.
+      // session.accessToken = token.accessToken
+      // session.user.id = token.id
+
+      return session
+    }
+
+  }
 }

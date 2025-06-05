@@ -44,7 +44,14 @@ app.use(currentSession)
 
 // Set up ExpressAuth to handle authentication
 // IMPORTANT: It is highly encouraged set up rate limiting on this route
-app.use("/api/auth/*", ExpressAuth(authConfig))
+app.use("/api/auth/*", ExpressAuth({...authConfig, callbacks: {
+  session: async ({ session, token, user }) => {
+    console.log("callback:session():session", session);
+    console.log("callback:session():token", token);
+    console.log("callback:session():user", user);
+    return session;
+  }
+}}))
 
 // Routes
 app.get("/protected", async (_req: Request, res: Response) => {
