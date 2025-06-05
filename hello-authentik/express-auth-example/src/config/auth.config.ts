@@ -25,44 +25,48 @@ import Twitter from "@auth/express/providers/twitter"
 import WorkOS from "@auth/express/providers/workos"
 import Zoom from "@auth/express/providers/zoom"
 
+import Authentik from "@auth/express/providers/authentik";
+
+
 export const authConfig = {
   trustHost: true,
   providers: [
     Apple,
-    Auth0,
-    AzureB2C({
-      clientId: process.env.AUTH_AZURE_AD_B2C_ID,
-      clientSecret: process.env.AUTH_AZURE_AD_B2C_SECRET,
-      issuer: process.env.AUTH_AZURE_AD_B2C_ISSUER,
-    }),
-    BoxyHQSAML({
-      clientId: "dummy",
-      clientSecret: "dummy",
-      issuer: process.env.AUTH_BOXYHQ_SAML_ISSUER,
-    }),
-    Cognito,
-    Coinbase,
-    Discord,
-    Dropbox,
-    Facebook,
-    GitHub,
-    GitLab,
-    Google,
-    Hubspot,
-    Keycloak,
-    LinkedIn,
-    Netlify,
-    Okta,
-    Passage,
-    Pinterest,
-    Reddit,
-    Slack,
-    Spotify,
-    Twitch,
-    Twitter,
-    WorkOS({
-      connection: process.env.AUTH_WORKOS_CONNECTION!,
-    }),
-    Zoom,
+    Authentik
+    // Auth0,
+    // AzureB2C({
+    //   clientId: process.env.AUTH_AZURE_AD_B2C_ID,
+    //   clientSecret: process.env.AUTH_AZURE_AD_B2C_SECRET,
+    //   issuer: process.env.AUTH_AZURE_AD_B2C_ISSUER,
+    // }),
+    // BoxyHQSAML({
+    //   clientId: "dummy",
+    //   clientSecret: "dummy",
+    //   issuer: process.env.AUTH_BOXYHQ_SAML_ISSUER,
+    // }),
+    // Cognito,
+    // Coinbase,
+    // Discord,
+    // Dropbox,
+    // Facebook,
+    // GitHub,
+    // GitLab,
+    // Google,
+    // Hubspot,
+    // Keycloak,
+    // LinkedIn,
+    // Netlify,
+    // Okta,
+    // Passage,
+    // Pinterest,
+    // Reddit,
+    // Slack,
+    // Spotify,
+    // Twitch,
+    // Twitter,
+    // WorkOS({
+    //   connection: process.env.AUTH_WORKOS_CONNECTION!,
+    // }),
+    // Zoom,
   ],
 }

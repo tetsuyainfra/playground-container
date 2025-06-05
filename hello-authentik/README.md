@@ -14,5 +14,12 @@ echo "AUTHENTIK_SECRET_KEY=$(openssl rand -base64 60 | tr -d '\n')" >> .env
 ./compose up
 
 # open in browser(needs last slash)
-http://localhost:9000/if/flow/initial-setup/
+http://localhost:9000/if/flow/initial-setup/A
+
+
+
+
+# after config authentik
+cd express-auth-example
+npm exec auth secret
 ```
